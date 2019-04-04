@@ -15,7 +15,7 @@ class App extends Component {
     .get('http://localhost:5000/friends')
     .then(res => {
       console.log(res);
-      this.setState({ friends: res.data });
+      this.setState({ data: res.data });
     })
     .catch(err => {
       console.log(err);
@@ -25,7 +25,7 @@ class App extends Component {
     return (
       <div className="App">
         <header className="Friends List">
-          <Friends friends={this.state.friends}/>
+          <Friends friends={this.state.data}/>
         </header>
       </div>
     );
@@ -39,13 +39,13 @@ export const Friends = props => {
   console.log(props);
   return (
     <ul>
-      {/* {props.friends.map(friend => (
-        <li>
-          <p>friend.name</p>
-          <p>friend.age</p>
-          <p>friend.email</p>
+      {props.friends.map(friend => (
+        <li key={friend.id}>
+          <p>{friend.name}</p>
+          <p>{friend.age}</p>
+          <p>{friend.email}</p>
         </li>
-      ))} */}
+      ))}
     </ul>
   )
 }
