@@ -7,8 +7,15 @@ class App extends Component {
   constructor() {
     super();
     this.state = {
-      data: []
+      data: [],
+      newFriend: {
+        name: "",
+        age: "",
+        email: ""
+      }
     }
+
+
   }
   componentDidMount() {
     axios
@@ -24,8 +31,46 @@ class App extends Component {
       console.log("cool")
     });
   }
+  handleInputChange = event => {
+    const name = event.target.name;
+    const value = event.target.value;
+    this.setState((state) => {
+      const newFriend = state.newFriend;
+      // console.log(newFriend);
+      newFriend[name] = value;
+      return {
+        newFriend:newFriend
+      }
+    });
 
-  formSubmitHandler(e) {
+
+  }
+
+  handleFormSubmit = event => {
+    event.preventDefault();
+    console.log(this.state.newFriend)
+
+    const newFriend = this.state.newFriend;
+    axios.post('http://localhost:5000/friends', newFriend)
+    .then(res => { 
+      console.log(res.data)
+      this.setState(state => {
+        return {
+          data: res.data,
+          newFriend: {
+            name: "",
+            age: "",
+            email: ""
+          }
+        }
+      }) 
+    })
+    .catch(err => console.log(err));
+    // this.setState(state => {
+      
+    // })
+    
+    // event.target
 
   }
 
@@ -33,10 +78,16 @@ class App extends Component {
     return (
       <div className="App">
         <header className="Friend Form">
-          <Form form={this.state.data}/>
+          <Form form={this.state.data}  
+          handleFormSubmit={this.handleFormSubmit}
+          newFriend={this.state.newFriend}
+          handleInputChange={this.handleInputChange}
+          />
         </header>
           <Friends friends={this.state.data}
-          formSubmitHandler={this.formSubmitHandler}/>
+          name={this.name}
+          email={this.email}
+          age={this.age}/>
       </div>
     );
   }
@@ -62,14 +113,30 @@ export const Friends = props => {
 
 export const Form = props => {
   console.log(props);
-  // const { name, age, email } = props;
+  const { handleFormSubmit, handleInputChange, newFriend } = props;
+  const { name, age, email } = newFriend;
   return (
-    <form onSubmit={props.formSubmitHandler}>
-      <input name="name" />
-      <input name="age" />
-      <input name="email" />
+    <form onSubmit={handleFormSubmit} >
+      <input
+      type="text" 
+      name="name" 
+      value={name} 
+      onChange={handleInputChange}
+      required/>
+      <input 
+      type="number" 
+      name="age" 
+      value={age} 
+      onChange={handleInputChange}
+      required/>
+      <input 
+      type="email" 
+      name="email" 
+      value={email} 
+      onChange={handleInputChange}
+      required/>
 
-      <button type="submit">Submit</button>
+      <input name="submit" type="submit" value="Submit" />
     </form>
   )
 }
