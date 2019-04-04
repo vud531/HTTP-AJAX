@@ -19,14 +19,24 @@ class App extends Component {
     })
     .catch(err => {
       console.log(err);
+    })
+    .then(() => {
+      console.log("cool")
     });
   }
+
+  formSubmitHandler(e) {
+
+  }
+
   render() {
     return (
       <div className="App">
-        <header className="Friends List">
-          <Friends friends={this.state.data}/>
+        <header className="Friend Form">
+          <Form form={this.state.data}/>
         </header>
+          <Friends friends={this.state.data}
+          formSubmitHandler={this.formSubmitHandler}/>
       </div>
     );
   }
@@ -47,5 +57,19 @@ export const Friends = props => {
         </li>
       ))}
     </ul>
+  )
+}
+
+export const Form = props => {
+  console.log(props);
+  // const { name, age, email } = props;
+  return (
+    <form onSubmit={props.formSubmitHandler}>
+      <input name="name" />
+      <input name="age" />
+      <input name="email" />
+
+      <button type="submit">Submit</button>
+    </form>
   )
 }
