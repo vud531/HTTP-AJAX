@@ -96,7 +96,7 @@ class App extends Component {
     .catch(err => console.log(err));
   }
 
-
+  //put method
   handleFriendClick = event => {
     console.dir(event.target);
     const id = event.target.id;
@@ -107,6 +107,7 @@ class App extends Component {
       }
     });
   }
+
 
   render() {
     return (
