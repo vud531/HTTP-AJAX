@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+// import  from 'react-router-dom';
+// import { NavLink, Link, Route } from 'react-router-dom';
 
 import './App.css';
 
 class App extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       data: [],
       newFriend: {
@@ -58,6 +60,32 @@ class App extends Component {
         return {
           data: res.data,
           newFriend: {
+            id: null,
+            name: "",
+            age: "",
+            email: ""
+          },
+          edittingFriend: null
+        }
+      }) 
+    })
+    .catch(err => console.log(err));
+    
+
+  }
+
+
+  updateFriend = event => {
+    event.preventDefault();
+    const newFriend = this.state.newFriend;
+    axios.post('http://localhost:5000/friends/' + this.state.friend.id, newFriend)
+    .then(res => { 
+      console.log(res.data)
+      this.setState(state => {
+        return {
+          data: res.data,
+          newFriend: {
+            id: null,
             name: "",
             age: "",
             email: ""
@@ -66,20 +94,27 @@ class App extends Component {
       }) 
     })
     .catch(err => console.log(err));
-    // this.setState(state => {
-      
-    // })
-    
-    // event.target
+  }
 
+
+  handleFriendClick = event => {
+    console.dir(event.target);
+    const id = event.target.id;
+    this.setState(state => {
+      const friend = state.data[id-1];
+      return {
+        newFriend: friend
+      }
+    });
   }
 
   render() {
     return (
       <div className="App">
         <header className="Friend Form">
-          <Form form={this.state.data}  
+          <Form data={this.state.data}  
           handleFormSubmit={this.handleFormSubmit}
+          updateFriend={this.updateFriend}
           newFriend={this.state.newFriend}
           handleInputChange={this.handleInputChange}
           />
@@ -87,7 +122,13 @@ class App extends Component {
           <Friends friends={this.state.data}
           name={this.name}
           email={this.email}
-          age={this.age}/>
+          age={this.age}
+          handleFriendClick={this.handleFriendClick}/>
+
+          {/* <Route path='/friends/:id' render={props => <Form 
+          handleFormSubmit={this.handleFriendUpdate}
+          handleInputChange={this.handleInputChange}
+          {...props} /> }/> */}
       </div>
     );
   }
@@ -97,11 +138,12 @@ export default App;
 
 
 export const Friends = props => {
-  console.log(props);
+  // console.log(props);
   return (
     <ul>
       {props.friends.map(friend => (
-        <li key={friend.id}>
+        <li key={friend.name} id={friend.id} > 
+          <button id={friend.id} onClick={props.handleFriendClick}>Edit Friend</button>
           <p>{friend.name}</p>
           <p>{friend.age}</p>
           <p>{friend.email}</p>
@@ -112,11 +154,16 @@ export const Friends = props => {
 }
 
 export const Form = props => {
-  console.log(props);
-  const { handleFormSubmit, handleInputChange, newFriend } = props;
-  const { name, age, email } = newFriend;
+
+  // console.log(props);
+  // if(!newFriend) {
+    
+  // }
+  const { handleFormSubmit, handleInputChange, newFriend, updateFriend } = props;
+  const { id, name, age, email } = newFriend;
   return (
-    <form onSubmit={handleFormSubmit} >
+    <form onSubmit={id ? updateFriend : handleFormSubmit } >
+      {id ? <input type="number" name="id" value={id} readOnly /> : <></>}
       <input
       type="text" 
       name="name" 
@@ -140,3 +187,5 @@ export const Form = props => {
     </form>
   )
 }
+
+
